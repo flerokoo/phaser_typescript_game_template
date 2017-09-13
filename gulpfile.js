@@ -78,9 +78,9 @@ gulp.task("bundle", "Compile and bundle all typescript files.", function(){
                     { test: /\.tsx?$/, loader: 'ts-loader', exclude: /node-modules/ }
                 ]*/
                 rules: [
-                    { test: /phaser-split\.js$/, use: 'expose-loader?Phaser' },
+                   /* { test: /phaser-split\.js$/, use: 'expose-loader?Phaser' },
                     { test: /pixi\.js$/, use: 'expose-loader?PIXI' },
-                    { test: /p2\.js$/, use: 'expose-loader?p2' },
+                    { test: /p2\.js$/, use: 'expose-loader?p2' },*/
                     { test: /\.tsx?$/, use: 'ts-loader', exclude: /node-modules/ }
                 ]
                 /*rules: [
@@ -132,9 +132,9 @@ gulp.task("reload", false, function(){
 })
 
 gulp.task("manifest", "Generate assets manifest inside build folder", function() {
-    require("./toolkit/generateManifest");
+    require("./tools/generateManifest");
 });
 
-gulp.task('build', "Compile, copy assets, create manifest. Use with --release to uglify.", sequence(['copy', 'bundle'], "reload") );
+gulp.task('build', "Compile, copy assets, create manifest. Use with --release to uglify.", sequence(['copy', 'bundle'], "manifest", "reload") );
 
 gulp.task('default', false, ['help'] )
