@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Game</title>
+	
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+    html,body{
+      width: 100%;
+      height: 100%;
+      background: #35d6ff;
+      background: -moz-linear-gradient(top, #35d6ff 0%, #1070d1 100%); 
+      background: -webkit-linear-gradient(top, #35d6ff 0%,#1070d1 100%); 
+      background: linear-gradient(to bottom, #35d6ff 0%,#1070d1 100%); 
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#35d6ff', endColorstr='#1070d1',GradientType=0 ); 
+    }
+    #content {
+      -webkit-box-shadow: 0px 25px 107px -4px rgba(0,0,0,0.69);
+      -moz-box-shadow: 0px 25px 107px -4px rgba(0,0,0,0.69);
+      box-shadow: 0px 25px 107px -4px rgba(0,0,0,0.69);
+    }
+  </style>
+
+</head>
+<body>
+	
+<div id="content"></div>
+
+<script>
+	// prevent gray bar on ios devices
+	window.addEventListener('scroll', function () {
+	if (document.activeElement === document.body && window.scrollY > 0) {
+			document.body.scrollTop = 0;
+		}
+	}, true);
+</script>
+
+<script type="text/javascript" src="js/bundle.js"></script>	
+
+
+</body>
+</html>

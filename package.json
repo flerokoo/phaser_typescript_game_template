@@ -1,0 +1,39 @@
+{
+  "name": "phaser_typescript_game",
+  "version": "1.0.0",
+  "description": "Phaser+Typescript game template",
+  "main": "gulpfile.js",
+  "scripts": {
+    "build": "gulp build",
+    "release": "gulp build --release",
+    "copy": "gulp copy",
+    "manifest": "gulp manifest",
+    "clean": "gulp clean"
+  },
+  "author": "Emile Shodiev",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "del": "^3.0.0",
+    "expose-loader": "^0.7.3",
+    "fs": "0.0.1-security",
+    "gulp": "^3.9.1",
+    "gulp-changed": "^3.1.0",
+    "gulp-help": "^1.6.1",
+    "gulp-if": "^2.0.2",
+    "gulp-sequence": "^0.4.6",
+    "gulp-tap": "^1.0.1",
+    "gulp-typescript": "^3.2.2",
+    "gulp-uglify": "^3.0.0",
+    "path": "^0.12.7",
+    "ts-loader": "^2.3.6",
+    "typescript": "^2.5.2",
+    "webpack": "^3.5.6",
+    "webpack-stream": "^4.0.0",
+    "yaml": "^0.3.0",
+    "yargs": "^8.0.2"
+  },
+  "dependencies": {
+    "phaser-ce": "^2.8.5"
+  }
+}
