@@ -1,13 +1,16 @@
+import { AssetPackManager } from "../assets/assetPackManager";
+
 
 export class Boot extends Phaser.State {
 
     preload() {
-        this.game.load.json("assets", "assets.json")
+        this.game.load.json("manifest", "assets/manifest.json");
         this.game.load.start();
     }
 
     create() {            
-        this.game.state.start("preloader")
+        AssetPackManager.init();
+        this.game.state.start("preloader");
     }
 
 

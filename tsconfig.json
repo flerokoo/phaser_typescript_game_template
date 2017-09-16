@@ -13,6 +13,7 @@
     "exclude": [
         "build",
         "assets",
-        "web"
+        "web",
+        "node_modules"
     ]
 }

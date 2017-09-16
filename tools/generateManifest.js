@@ -4,7 +4,6 @@
 
 var fs = require("fs")
 var path = require("path")
-
 /**
  * Returns manifest in JSON format
  * @param {string} dir Directory where asset packs are

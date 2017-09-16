@@ -9,6 +9,7 @@ var webpack = require('webpack')
 var stream = require("webpack-stream")
 var sequence = require("gulp-sequence")
 var uglify = require("gulp-uglify")
+var minify = require("gulp-minify")
 var args = require('yargs').argv;
 var gulpif = require('gulp-if')
 var help = require('gulp-help')(gulp)
@@ -20,8 +21,8 @@ var debug = args.release === undefined || !args.release;
 
 var params = {
     game : {
-        width: 500,
-        height: 500,
+        width: 640,
+        height: 800,
         name: "Game#1",
         version: "1.0.0",
         stretchOnDesktop: false
@@ -66,29 +67,12 @@ gulp.task("bundle", "Compile and bundle all typescript files.", function(){
                 filename: params.build.bundleFileName
             },
             resolve:  {
-                extensions: [".ts", ".tsx", ".js" ]/*,
-                alias: {
-                     phaser: path.join(__dirname, 'node_modules/phaser-ce/build/custom/phaser-split.js'),
-                     p2: path.join(__dirname, 'node_modules/phaser-ce/build/custom/p2.js'),
-                     pixi: path.join(__dirname, 'node_modules/phaser-ce/build/custom/pixi.js')
-                }*/
+                extensions: [".ts", ".tsx", ".js" ]
             },
             module: {
-                /*loaders: [
-                    { test: /\.tsx?$/, loader: 'ts-loader', exclude: /node-modules/ }
-                ]*/
-                rules: [
-                   /* { test: /phaser-split\.js$/, use: 'expose-loader?Phaser' },
-                    { test: /pixi\.js$/, use: 'expose-loader?PIXI' },
-                    { test: /p2\.js$/, use: 'expose-loader?p2' },*/
+                rules: [                  
                     { test: /\.tsx?$/, use: 'ts-loader', exclude: /node-modules/ }
                 ]
-                /*rules: [
-                    { test: /phaser-split\.js$/, use: [{loader: 'expose-loader', options: "Phaser"}] },
-                    { test: /pixi\.js$/, use: [{loader: 'expose-loader', options: "pixi"}] },
-                    { test: /p2\.js$/, use: [{loader: 'expose-loader', options: "p2"}] },
-                    { test: /\.tsx?$/, loader: 'ts-loader', exclude: /node-modules/ }
-                ]*/
             },
             plugins: [
                 new webpack.DefinePlugin({
@@ -99,9 +83,11 @@ gulp.task("bundle", "Compile and bundle all typescript files.", function(){
                     'GAME_NAME': JSON.stringify( params.game.name ),
                     'GAME_VERSION': JSON.stringify( params.game.version )
                 })
-            ]
+            ],
+            devtool: (debug ? 'inline-source-map' : undefined )
          }, webpack))
-        .pipe(gulpif(!debug, uglify()))
+        .pipe(gulpif(!debug, uglify({mangle: true, compress: true})))
+        //.pipe(gulpif(!debug, minify()))
         .pipe(gulp.dest(params.build.destination + '/js/'))     
          
 })
