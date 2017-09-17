@@ -28,7 +28,7 @@ export class AssetPackManager {
         }
     }
 
-    static isReady( packList:string[] ):boolean {        
+    static isReady( ...packList:string[] ):boolean {        
         for (var i = 0; i < packList.length; i++) {
             var packName = packList[i];
             var pack = AssetPackManager.packs[packName];
@@ -65,7 +65,7 @@ export class AssetPackManager {
     static prioritize( name:string ) {
         Assert.that( this.packs[name], "No pack with name = " + name)
         // do nothing if already loading this pack
-        if( this.runningTask.def.pack.toLowerCase() == name.toLowerCase()) return;
+        if( this.runningTask.def.pack == name) return;
         
         // trying to find existing definition and put it in beginning of the queue
         for( let i in this.queue ) {
@@ -160,7 +160,6 @@ class LoadingTask {
         if( pack.entries["spritesheet"] )
             for( var name in pack.entries["spritesheet"] ) {
                 var entry = pack.entries["spritesheet"][name];
-                console.log(entry)
                 this.loader.atlasJSONHash((<string>entry.name).replace(/\\/g, '/'), entry.image, entry.url );
             }
 
