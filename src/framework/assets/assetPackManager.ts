@@ -4,11 +4,12 @@ import { Entry } from "../../entry";
 import { Assert } from "../tools/assert";
 
 type LoadingTaskDef = { pack:string, handle: LoadingTaskHandle }  
-
+type NotifyTask = { packs:string[], fn:Function }
 export class AssetPackManager {
     
     private static conf:Object;    
     private static queue:LoadingTaskDef[];
+    private static notifyTasks:NotifyTask[];
     static packs:Object;
     static runningTask:LoadingTask;
     static onPackLoad:Signal;
@@ -16,23 +17,27 @@ export class AssetPackManager {
     static init() {        
         let json = Entry.game.cache.getJSON("manifest");     
         this.queue = [];        
+        this.notifyTasks = [];
         this.onPackLoad = new Signal();
         this.onPackLoad.add( () => {
             this.runningTask = null;
             this.processQueue();
+            this.updateNotifyTasks();
         });
         AssetPackManager.conf = json;
         AssetPackManager.packs = {};
         for( var packName in json ) {
             AssetPackManager.packs[packName] = new AssetPack(json[packName], packName);
         }
+
+        (<any>window).isr = this.isReady;
     }
 
-    static isReady( ...packList:string[] ):boolean {        
+    static isReady( packList:string[] ):boolean {        
         for (var i = 0; i < packList.length; i++) {
             var packName = packList[i];
             var pack = AssetPackManager.packs[packName];
-            Assert.that( pack, 'No asset pack with named $packName' );
+            Assert.that( pack, `No asset pack with named ${packName}` );
             if( pack.state !== AssetPackState.READY )
                 return false;
         }
@@ -40,9 +45,9 @@ export class AssetPackManager {
     }
   
     static addToQueue( name:string ) : LoadingTaskHandle {     
-        Assert.that( this.packs[name], "No pack with name = " + name)
-        Assert.that( this.packs[name].state != AssetPackState.READY, `Pack ${name} is ready`);
-        if( this.runningTask != null && this.runningTask.def.pack == name) {
+        Assert.that( this.packs[name], `No pack with name = ${name}`)
+        Assert.that( this.packs[name].state !== AssetPackState.READY, `Pack ${name} is ready`);
+        if( this.runningTask && this.runningTask.def.pack == name) {
             // already loading this pack
             return this.runningTask.def.handle;
         } else {
@@ -56,7 +61,7 @@ export class AssetPackManager {
             this.queue.push({
                 pack: name,
                 handle: handle
-            })
+            });
             this.processQueue();
             return handle;
         }
@@ -82,6 +87,27 @@ export class AssetPackManager {
         if( DEBUG )
             console.warn(`Pack ${name} was not prioritized (not in queue)`)
         return;
+    }
+
+    static callWhenReady( packs:string[], fn:Function ) {
+        if( AssetPackManager.isReady(packs) ) {
+            fn();
+        } else {
+            this.notifyTasks.push({
+                fn: fn,
+                packs: packs
+            });
+        }
+    }
+
+    private static updateNotifyTasks() {
+        let i = this.notifyTasks.length;
+        while( i-- ) {
+            if( this.isReady( this.notifyTasks[i].packs ) ) {
+                this.notifyTasks[i].fn();
+                this.notifyTasks.splice(i,1);
+            }
+        }
     }
 
     private static processQueue() {
@@ -135,31 +161,31 @@ class LoadingTask {
         
         if( pack.entries["audio"] )
             for( var name in pack.entries["audio"] ) {
-                var entry = pack.entries["audio"][name];
+                entry = pack.entries["audio"][name];
                 this.loader.audio((<string>entry.name).replace(/\\/g, '/'), entry.url );
             }
 
         if( pack.entries["json"] )
-            for( var name in pack.entries["json"] ) {
-                var entry = pack.entries["json"][name];
+            for( name in pack.entries["json"] ) {
+                entry = pack.entries["json"][name];
                 this.loader.json((<string>entry.name).replace(/\\/g, '/'), entry.url );
             }
 
         if( pack.entries["raw"] )
-            for( var name in pack.entries["raw"] ) {
-                var entry = pack.entries["raw"][name];
+            for( name in pack.entries["raw"] ) {
+                entry = pack.entries["raw"][name];
                 this.loader.text((<string>entry.name).replace(/\\/g, '/'), entry.url );
             }
 
         if( pack.entries["font"] )
-            for( var name in pack.entries["font"] ) {
-                var entry = pack.entries["font"][name];
+            for( name in pack.entries["font"] ) {
+                entry = pack.entries["font"][name];
                 this.loader.bitmapFont((<string>entry.name).replace(/\\/g, '/'), entry.image, entry.url );
             }
 
         if( pack.entries["spritesheet"] )
-            for( var name in pack.entries["spritesheet"] ) {
-                var entry = pack.entries["spritesheet"][name];
+            for( name in pack.entries["spritesheet"] ) {
+                entry = pack.entries["spritesheet"][name];
                 this.loader.atlasJSONHash((<string>entry.name).replace(/\\/g, '/'), entry.image, entry.url );
             }
 

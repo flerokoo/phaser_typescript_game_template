@@ -5,10 +5,10 @@ import { SMath } from "../tools/smath";
 export class AdaptiveGroup extends Group {
     
     private binding;
-    private _posX:number;
-    private _posY:number;
-    private _offsetX:number;
-    private _offsetY:number;
+    private _posX:number = 0;
+    private _posY:number = 0;
+    private _offsetX:number = 0;
+    private _offsetY:number = 0;
     private _scaleOffsetX:number = 0;
     private _scaleOffsetY:number = 0;
 
@@ -48,8 +48,8 @@ export class AdaptiveGroup extends Group {
         return this._offsetY;
     }
 
-    constructor( game:Game, parent?:PIXI.DisplayObjectContainer, name?:string ) {
-        super( game, parent, name );
+    constructor( game:Game, parent?:PIXI.DisplayObjectContainer, name?:string, addToStage?:boolean ) {
+        super( game, parent, name, addToStage );
         Layout.onRelayout.add( this.updatePosition, this );
     }
 
@@ -68,8 +68,8 @@ export class AdaptiveGroup extends Group {
     }
 
     updatePosition(): any {   
-        var gpos = new Point( this._posX * this.game.width, this._posY * this.game.height );
-        var pos = this.parent.toLocal( gpos, this.game.world );
+        var gpos = new Point( this._posX * this.game.width, this._posY * this.game.height );        
+        var pos = this.parent.toLocal( gpos, null );
         this.position.set( 
             pos.x + SMath.lerp( this._scaleOffsetX, this._offsetX, this._offsetX * Layout.scaleFactor ),
             pos.y + SMath.lerp( this._scaleOffsetY, this._offsetY, this._offsetY * Layout.scaleFactor )

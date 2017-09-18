@@ -15,8 +15,11 @@ function getManifest( dir ) {
     for (var packIndex = 0; packIndex < packs.length; packIndex++) {
         var packPath = path.join(dir, packs[packIndex])        
         if( fs.statSync(packPath).isDirectory() ) {
-            out[packs[packIndex]] = getAssetsFromDir( packPath, dir );
-            processAssetPack( out[packs[packIndex]] );            
+            var packFiles = fs.readdirSync( packPath );
+            if( packFiles.length > 0 ) {
+                out[packs[packIndex]] = getAssetsFromDir( packPath, dir );
+                processAssetPack( out[packs[packIndex]] );            
+            }
         }
 
     }

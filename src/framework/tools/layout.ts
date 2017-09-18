@@ -8,7 +8,7 @@ export class Layout {
     static stretchOnDesktop:boolean = STRETCHED_ON_DESKTOP;
 
     private static game:Phaser.Game;
-
+    private static dirty:boolean = true;
 
     static init( game:Phaser.Game, w:number = 640, h:number = 800 ) {
     
@@ -20,19 +20,29 @@ export class Layout {
 
         game.scale.pageAlignHorizontally = false;
 		game.scale.pageAlignVertically = false;
-		game.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;        
-        window.addEventListener("resize", function() {
+        game.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;     
+        game.scale.fullScreenScaleMode = Phaser.ScaleManager.NO_SCALE;
+        game.scale.fullScreenTarget = document.getElementById('content');
+
+        var reaction = () => {
+            Layout.dirty = true;
             window.setTimeout( Layout.relayout, 300 );
-        });
+        };
+
+        game.scale.onFullScreenChange.add( reaction, Layout );           
+        window.addEventListener("resize", reaction);
         Layout.relayout();
     }
 
     static relayout() {
-        var canvas:HTMLCanvasElement = Layout.game.canvas;
-        var div:HTMLElement = canvas.parentElement;
-        var body:HTMLElement = document.body;
+        if( !Layout.dirty ) return;
+        Layout.dirty = false;
 
-        if( Layout.game.device.desktop && !Layout.stretchOnDesktop ) {
+        var canvas:HTMLCanvasElement = Layout.game.canvas;
+        var div:HTMLElement = document.getElementById('content');
+        var body:HTMLElement = document.body;
+      
+        if( Layout.game.device.desktop && !Layout.stretchOnDesktop && !Layout.game.scale.isFullScreen ) {
             Layout.game.scale.setGameSize( Layout.supposedWidth, Layout.supposedHeight );
             div.style.width = Layout.supposedWidth + 'px';
             div.style.height = Layout.supposedHeight + 'px';
@@ -44,7 +54,7 @@ export class Layout {
             Layout.game.scale.setGameSize( window.innerWidth, window.innerHeight );
             div.style.margin = '0';
             div.style.width = window.innerWidth + 'px';
-            div.style.height = window.innerWidth + 'px';
+            div.style.height = window.innerHeight + 'px';
             body.style.padding = '0';
 
         }

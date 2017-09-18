@@ -1,18 +1,26 @@
+import { Game } from "phaser-ce";
+import { ScreenSpace } from "../gameobject/ScreenSpace";
+import { AdaptiveGroup } from "../gameobject/adaptiveGroup";
+
 export class Factory {
 
-    private static game:Phaser.Game
 
-    static init( game:Phaser.Game) {
-        Factory.game = game;
+    static screenSpace( game:Game, parent?:PIXI.DisplayObjectContainer, name?:string, addToStage?:boolean ):ScreenSpace {
+        return new ScreenSpace( game, parent, name, addToStage );
     }
 
-    static spriteHolder(x:number, y:number, key?:any, frame?:any) {
-        var sprite = Factory.game.make.sprite(x,y,key,frame)
-        var holder = Factory.game.make.group()
-        Factory.game.add
-        return holder;
-       
-
+    static adaptiveGroup( game:Game, parent?:PIXI.DisplayObjectContainer, name?:string, addToStage?:boolean) {
+        return new AdaptiveGroup(game, parent, name, addToStage);
     }
+
+    static adaptiveImage( game:Game, key:string, frame?:string, parent?:PIXI.DisplayObjectContainer, name?:string, addToStage?:boolean ) {        
+        var g = new AdaptiveGroup( game, parent, name, addToStage );
+        var s = game.add.image(0, 0, key, frame, g );
+        return {
+            group: g,
+            image: s
+        };
+    }
+
 
 }

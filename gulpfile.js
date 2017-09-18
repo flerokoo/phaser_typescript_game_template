@@ -113,14 +113,10 @@ gulp.task("serve", "Start test server", function(){
     browserSync.watch( "./build/**/*.js" ).on('change', browserSync.reload )
 })
 
-gulp.task("reload", false, function(){
-    browserSync.notify("PRIVET")
-})
-
 gulp.task("manifest", "Generate assets manifest inside build folder", function() {
     require("./tools/generateManifest");
 });
 
-gulp.task('build', "Compile, copy assets, create manifest. Use with --release to uglify.", sequence(['copy', 'bundle'], "manifest", "reload") );
+gulp.task('build', "Compile, copy assets, create manifest. Use with --release to uglify.", sequence(['copy', 'bundle'], "manifest") );
 
 gulp.task('default', false, ['help'] )
