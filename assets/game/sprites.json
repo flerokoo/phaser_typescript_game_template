@@ -1,0 +1,35 @@
+{
+"frames": {
+	"background.png": {
+		"frame": {"x":0, "y":0, "w":768, "h":1024},
+		"spriteSourceSize": {"x":0,"y":0,"w":768,"h":1024},
+		"sourceSize": {"w":768,"h":1024}
+	},
+	"continueButton.png": {
+		"frame": {"x":0, "y":1264, "w":281, "h":90},
+		"spriteSourceSize": {"x":0,"y":0,"w":281,"h":90},
+		"sourceSize": {"w":281,"h":90}
+	},
+	"pauseButton.png": {
+		"frame": {"x":0, "y":1446, "w":206, "h":90},
+		"spriteSourceSize": {"x":0,"y":0,"w":206,"h":90},
+		"sourceSize": {"w":206,"h":90}
+	},
+	"returnButton.png": {
+		"frame": {"x":0, "y":1355, "w":281, "h":90},
+		"spriteSourceSize": {"x":0,"y":0,"w":281,"h":90},
+		"sourceSize": {"w":281,"h":90}
+	},
+	"sprite.png": {
+		"frame": {"x":0, "y":1025, "w":409, "h":238},
+		"spriteSourceSize": {"x":0,"y":0,"w":409,"h":238},
+		"sourceSize": {"w":409,"h":238}
+	}
+
+},
+"meta": {
+	"image": "sprites.png",
+	"size": {"w": 1024, "h": 2048},
+	"scale": "1"
+}
+}

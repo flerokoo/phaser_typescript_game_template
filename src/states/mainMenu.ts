@@ -73,7 +73,9 @@ export class MainMenu extends Phaser.State {
 
     toGameState() {
         this.game.input.enabled = false;
-        this.mask.fadeIn(500);
+        this.mask.fadeIn(500).onActionComplete.addOnce( () => {
+            this.game.state.start("game");
+        }, this);
     }
 
 }

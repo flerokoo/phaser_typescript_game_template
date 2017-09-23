@@ -4,7 +4,7 @@ import { Entry } from "../../entry";
 import { Assert } from "../tools/assert";
 
 type LoadingTaskDef = { pack:string, handle: LoadingTaskHandle }  
-type NotifyTask = { packs:string[], fn:Function }
+type NotifyTask = { packs:string[], fn:Function, context:any }
 export class AssetPackManager {
     
     private static conf:Object;    
@@ -44,7 +44,7 @@ export class AssetPackManager {
         return true;
     }
   
-    static addToQueue( name:string ) : LoadingTaskHandle {     
+    static addToQueue( name:string, prioritize:boolean = false ) : LoadingTaskHandle {     
         Assert.that( this.packs[name], `No pack with name = ${name}`)
         Assert.that( this.packs[name].state !== AssetPackState.READY, `Pack ${name} is ready`);
         if( this.runningTask && this.runningTask.def.pack == name) {
@@ -58,10 +58,14 @@ export class AssetPackManager {
             }
             // pack is not in queue -- create new entry
             var handle = new LoadingTaskHandle( name );
-            this.queue.push({
+            var newOne = {
                 pack: name,
                 handle: handle
-            });
+            };
+            if( prioritize )
+                this.queue.unshift( newOne );
+            else
+                this.queue.push( newOne );
             this.processQueue();
             return handle;
         }
@@ -89,14 +93,24 @@ export class AssetPackManager {
         return;
     }
 
-    static callWhenReady( packs:string[], fn:Function ) {
+    static callWhenReady( packs:string[], fn:Function, context?:any, addToQueue:boolean = false, prioritize:boolean = false ) {
+        
         if( AssetPackManager.isReady(packs) ) {
-            fn();
+            fn.apply(context);
         } else {
             this.notifyTasks.push({
                 fn: fn,
-                packs: packs
+                packs: packs,
+                context: context
             });
+            if( addToQueue ) {
+                for (var o = 0; o < packs.length; o++ ) {
+                    var packName = packs[o];
+                    if( this.packs[packName].state !== AssetPackState.READY )   {
+                        this.addToQueue( packName, prioritize );
+                    }
+                }            
+            }
         }
     }
 
@@ -104,7 +118,7 @@ export class AssetPackManager {
         let i = this.notifyTasks.length;
         while( i-- ) {
             if( this.isReady( this.notifyTasks[i].packs ) ) {
-                this.notifyTasks[i].fn();
+                this.notifyTasks[i].fn.apply( this.notifyTasks[i].context );
                 this.notifyTasks.splice(i,1);
             }
         }
@@ -198,6 +212,9 @@ class LoadingTask {
         this.loading = true;
         this.loader.onLoadComplete.addOnce( this.complete, this );
         this.loader.onFileComplete.add(() => this.def.handle.onProgressChange.dispatch(this.loader.progress/100), this);
+        this.loader.onFileError.add( (e) => {
+            console.error( "Error during loading " + this.def.handle.pack, e )
+        })
         this.loader.start();
         return this;
     }

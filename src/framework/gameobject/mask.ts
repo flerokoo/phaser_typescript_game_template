@@ -1,4 +1,4 @@
-import { Graphics, Game, SignalBinding, Group } from "phaser-ce";
+import { Graphics, Game, SignalBinding, Group, Signal } from "phaser-ce";
 import { Layout } from "../tools/layout";
 
 
@@ -7,12 +7,14 @@ export class Mask extends Group {
     protected gr:Graphics;
     protected color;
     protected binding:SignalBinding;
+    onActionComplete:Signal;
 
     constructor( game:Game, clr = 0x000000, parent?:PIXI.DisplayObjectContainer, name?:string, addToStage?:boolean ) {        
         super( game, parent, name, addToStage );
         this.gr = this.game.add.graphics(0,0,this);
         this.color = clr;
         this.redraw();
+        this.onActionComplete = new Signal();
         this.binding = Layout.onRelayout.add( this.redraw, this );        
     }
 
@@ -34,20 +36,24 @@ export class Mask extends Group {
     }
 
     fadeIn( time = 300 ) {
-        this.game.add.tween(this).to( {alpha: 1}, time ).start();
+        this.game.add.tween(this).to( {alpha: 1}, time ).start().onComplete.addOnce(this.fireSignal, this);
         return this;
     }
 
     fadeOut( time = 300 ) {
-        this.game.add.tween(this).to( {alpha: 0}, time ).start();
+        this.game.add.tween(this).to( {alpha: 0}, time ).start().onComplete.addOnce(this.fireSignal, this);
         return this;
     }
 
     fadeInOut( time = 300, fn?:Function ) {
         this.game.add.tween( this ).to( {alpha: 1}, time ).start().onComplete.addOnce( () => {
             if( fn ) fn();
-            this.game.add.tween( this ).to( {alpha: 0 }).start();
+            this.game.add.tween( this ).to( {alpha: 0 }).start().onComplete.addOnce(this.fireSignal, this);
         });
         return this;
+    }
+
+    private fireSignal() {
+        this.onActionComplete.dispatch();
     }
 }

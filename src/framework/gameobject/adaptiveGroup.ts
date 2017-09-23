@@ -68,6 +68,8 @@ export class AdaptiveGroup extends Group {
     }
 
     updatePosition(): any {   
+        if( !this.parent ) return;
+        
         var gpos = new Point( this._posX * this.game.width, this._posY * this.game.height );        
         var pos = this.parent.toLocal( gpos, null );
         this.position.set( 

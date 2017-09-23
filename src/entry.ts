@@ -9,6 +9,7 @@ import { Preloader } from './framework/states/preloader';
 import { Layout } from './framework/tools/layout';
 import { Boot } from './framework/states/boot';
 import { AssetPackManager } from './framework/assets/assetPackManager';
+import { GameState } from './states/gamestate';
 
 
 export class Entry {	
@@ -32,7 +33,7 @@ export class Entry {
 
 		// load additional assets in background after main asset pack is loaded
 		Preloader.onComplete.add( () => {
-			//AssetPackManager.addToQueue( "pack2" );
+			//AssetPackManager.addToQueue( "game" );
 		});
 		
 		
@@ -42,8 +43,9 @@ export class Entry {
 		Entry.game.state.add( 'preloader', Preloader );
 		// other states...
 		Entry.game.state.add( 'mainmenu', MainMenu );
+		Entry.game.state.add( 'game', GameState );
 
-		// starting with boot
+		// starting boot state
 		Entry.game.state.start( 'boot' );		
 	}
 
