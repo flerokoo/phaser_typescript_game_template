@@ -19,6 +19,9 @@
 * `clean` — clean up project folder
 * `manifest` — generate manifest.json (describes all assets)
 
+# API
+
+...
 
 ## Project Structure
 
@@ -33,3 +36,4 @@
 * Add TSLint check to webpack (tslint-loader)
 * Add assets autocomplete
 * Add compile-time spritesheet building
+* Finish this readme
